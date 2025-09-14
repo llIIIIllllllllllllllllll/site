@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Я люблю тебя!</title>
+    <style>
+        body {
+            background-color: pink;
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        button {
+            background-color: #1f2937;
+            color: #f8fafc;
+            border-radius: 12px;
+            height: 100px;
+            width: 100%;
+            border: none;
+            max-width: 400px;
+            font-size: 32px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+        button:hover {
+            transform: scale(0.97);
+        }
+        div#text {
+            max-width: 400px;
+            font-size: 16px;
+            padding: 12px;
+            user-select: none;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            background-color: #f8fafcdd;
+            color: #1f2937;
+            margin-bottom: 12px;
+            opacity: 0;
+            transition: opacity 0.55s ease;
+        }
+        div#text.show {
+            opacity: 1;
+        }
+        #hearts {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+            overflow: visible;
+            user-select: none;
+        }
+        .heart {
+            font-size: 48px;
+            color: red;
+            position: absolute;
+            user-select: none;
+            animation: jump 0.8s ease forwards;
+            pointer-events: none;
+            filter: drop-shadow(0 0 2px darkmagenta);
+        }
+        @keyframes jump {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg);
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) rotate(var(--dr));
+                opacity: 0;
+            }
+        }
+        #signature {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: crimson;
+            font-weight: 700;
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            font-size: 22px;
+            user-select: none;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 30;
+        }
+        #signature.show {
+            opacity: 1;
+        }
+
+        /* Добавлено: стили для всплывающих фраз */
+        .floating-phrase {
+            position: absolute;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1f2937;
+            background: rgba(255, 192, 203, 0.7);
+            padding: 8px 12px;
+            border-radius: 8px;
+            pointer-events: none;
+            user-select: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 1s ease, transform 1s ease;
+            white-space: nowrap;
+            z-index: 20;
+        }
+        .floating-phrase.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div id="signature">От Артема))</div>
+    <div id="text"></div>
+    <button id="myButton">нажми на меня)</button>
+    <div id="hearts"></div>
+    <script>
+        const btnShowSig = document.querySelector('#signature');
+        setInterval(() => {
+            btnShowSig.classList.add('show');
+            setTimeout(() => btnShowSig.classList.remove('show'), 3000);
+        }, 6000);
+
+        const heartsContainer = document.querySelector('#hearts');
+        const btn = document.querySelector('#myButton');
+        const textDiv = document.querySelector('#text');
+
+        const phrases = [
+            'Моя самая любимая!)',
+            'Самая лучшая!)',
+            'Ты просто прелесть!)',
+            'Умница!)',
+            'Молодец!)',
+            'Я знал что у тебя получится!)',
+            'Ты у меня самая умная!)',
+            'Моя маленькая принцесса!)',
+            'Дорогая)'
+        ];
+
+        function createHeart() {
+            let heart = document.createElement('span');
+            heart.textContent = '❤';
+            heart.className = 'heart';
+            // Случайная позиция по горизонтали
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            // Случайный сдвиг для анимации
+            const dx = (Math.random() - 0.5) * 100 + 'px';
+            const dy = - (Math.random() * 200 + 100) + 'px';
+            const dr = (Math.random() * 90 - 45) + 'deg';
+            heart.style.setProperty('--dx', dx);
+            heart.style.setProperty('--dy', dy);
+            heart.style.setProperty('--dr', dr);
+            heartsContainer.appendChild(heart);
+            setTimeout(() => {
+                heart.remove();
+            }, 800);
+        }
+
+        function createFloatingPhrase() {
+            const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+            const phraseEl = document.createElement('div');
+            phraseEl.className = 'floating-phrase';
+            phraseEl.textContent = phrase;
+
+            const containerWidth = window.innerWidth || document.body.clientWidth;
+            const containerHeight = window.innerHeight || document.body.clientHeight;
+
+            // Отступы, чтобы текст не выходил за пределы экрана
+            const x = Math.random() * (containerWidth - 150);
+            const y = Math.random() * (containerHeight - 50);
+
+            phraseEl.style.left = `${x}px`;
+            phraseEl.style.top = `${y}px`;
+
+            document.body.appendChild(phraseEl);
+
+            // Активация плавного появления
+            setTimeout(() => {
+                phraseEl.classList.add('show');
+            }, 10);
+
+            // Плавное исчезновение и удаление
+            setTimeout(() => {
+                phraseEl.classList.remove('show');
+                setTimeout(() => {
+                    if (phraseEl.parentElement) {
+                        phraseEl.parentElement.removeChild(phraseEl);
+                    }
+                }, 1000);
+            }, 3000);
+        }
+
+        btn.addEventListener('click', () => {
+            textDiv.textContent = "хихихи)";
+            textDiv.classList.add('show');
+
+            for(let i=0; i < 15; i++){
+                createHeart();
+            }
+
+            createFloatingPhrase();
+        });
+    </script>
+</body>
+</html>
